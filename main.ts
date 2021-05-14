@@ -1,7 +1,7 @@
-import { app, BrowserWindow, screen } from "electron";
+import { app, BrowserWindow, screen, ipcMain } from "electron";
 import * as path from "path";
 import * as url from "url";
-
+import * as dns from "dns";
 // Initialize remote module
 require("@electron/remote/main").initialize();
 
@@ -14,8 +14,8 @@ function createWindow(): BrowserWindow {
 
   // Create the browser window.
   win = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: 870,
+    height: 650,
     autoHideMenuBar: true,
     icon: "src/assets/icons/favicon.ico",
     webPreferences: {
@@ -42,15 +42,27 @@ function createWindow(): BrowserWindow {
       })
     );
   }
-
-  // Emitted when the window is closed.
-  win.on("closed", () => {
-    // Dereference the window object, usually you would store window
-    // in an array if your app supports multi windows, this is the time
-    // when you should delete the corresponding element.
-    win = null;
+  win.on("close", (e) => {
+    if (win !== null) {
+      e.returnValue = false;
+      win.webContents.send("shutdown");
+    }
   });
-
+  ipcMain.on("open-devtools", (e, args) => {
+    win.webContents.openDevTools();
+  });
+  // Emitted when the window is closed.
+  ipcMain.on("close", () => {
+    win.destroy();
+  });
+  ipcMain.on("dnslookup", (event, args) => {
+    dns.resolveTxt(args[0], (err, addr) => {
+      console.log(err, addr);
+      if (addr) {
+        win.webContents.send("dnslookup-feedback-" + args[1], [addr]);
+      }
+    });
+  });
   return win;
 }
 
@@ -69,7 +81,6 @@ try {
       app.quit();
     }
   });
-
   app.on("activate", () => {
     // On OS X it's common to re-create a window in the app when the
     // dock icon is clicked and there are no other windows open.

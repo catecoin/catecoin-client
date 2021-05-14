@@ -47,3 +47,10 @@ testem.log
 # System Files
 .DS_Store
 Thumbs.db
+
+
+catecoin_data/*
+!catecoin_data/genesis.json
+
+bin/*
+!catecoin_data/

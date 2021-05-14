@@ -1,5 +1,6 @@
 {
   "productName": "catecoin-client",
+  "asar": "false",
   "directories": {
     "output": "release/"
   },
@@ -23,21 +24,17 @@
     "!.eslintrc.json",
     "!karma.conf.js",
     "!angular.webpack.js",
-    "!*.map"
+    "!*.map",
+    "!catecoin_data/chain/",
+    "!node_modules/ng-zorro-antd/",
+    "!node_modules/date-fns/",
+    "!node_modules/@angular/",
+    "!node_modules/@ant-design/"
   ],
   "win": {
-    "icon": "dist/assets/icons",
     "target": ["portable"]
   },
   "portable": {
     "splashImage": "dist/assets/icons/favicon.png"
-  },
-  "mac": {
-    "icon": "dist/assets/icons",
-    "target": ["dmg"]
-  },
-  "linux": {
-    "icon": "dist/assets/icons",
-    "target": ["AppImage"]
   }
 }

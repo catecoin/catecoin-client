@@ -10,6 +10,8 @@ import { AppRoutingModule } from "./app-routing.module";
 import { NzMenuModule } from "ng-zorro-antd/menu";
 import { NzIconModule } from "ng-zorro-antd/icon";
 import { NzAffixModule } from "ng-zorro-antd/affix";
+import { NzSpinModule } from "ng-zorro-antd/spin";
+import { NzModalModule, NzModalService } from "ng-zorro-antd/modal";
 // NG Translate
 import { TranslateModule, TranslateLoader } from "@ngx-translate/core";
 import { TranslateHttpLoader } from "@ngx-translate/http-loader";
@@ -37,6 +39,8 @@ export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
     SharedModule,
     NzAffixModule,
     NzMenuModule,
+    NzSpinModule,
+    NzModalModule,
     NzIconModule.forRoot(ICONS_AUTO),
     HomeModule,
     DetailModule,
@@ -49,7 +53,7 @@ export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
       },
     }),
   ],
-  providers: [],
+  providers: [NzModalService],
   bootstrap: [AppComponent],
 })
 export class AppModule {}
