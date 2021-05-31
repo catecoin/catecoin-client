@@ -1,6 +1,6 @@
 {
     "config": {
-        "chainId": 115599335577,
+        "chainId": 1618,
         "homesteadBlock": 0,
         "daoForkBlock": 0,
         "daoForkSupport": true,
@@ -14,15 +14,15 @@
     },
     "nonce": "0x42",
     "timestamp": "0x0",
-    "extraData": "0x11bbe8db4e347b4e8c937c1c8370e4b5ed33adb3db69cbdb7a38e1e50b1b82fa",
-    "gasLimit": "0x1388",
+    "extraData": "0x48656c6c6f2043617465636f696e",
+    "gasLimit": "0xde0b6b3a7640000",
     "difficulty": "0x1",
     "alloc": {
         "0x4899C2c977FEE845941c0b49Fa743F7958Ad64BB": {
-            "balance": "0xffffffffffffffff"
+            "balance": "0x64f964e68233a800000000000"
         },
         "0x921dE6974F8191BFCC3dd4AA628e1BBf6a2f44Fc": {
-            "balance": "0xffffffffffffffff"
+            "balance": "0x64f964e68233a800000000000"
         }
     }
 }

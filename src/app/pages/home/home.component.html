@@ -2,17 +2,11 @@
   <div nz-row>
     <div nz-col nzXl="12" nzMd="12" nzXs="24" nzSm="24" style="padding: 10px">
       <nz-card nzTitle="Balances">
-        <nz-row [nzGutter]="16">
-          <nz-col [nzSpan]="12">
+        <nz-row>
+          <nz-col [nzSpan]="24">
             <nz-statistic
-              [nzValue]="(1949101 | number)!"
-              [nzTitle]="'Active Users'"
-            ></nz-statistic>
-          </nz-col>
-          <nz-col [nzSpan]="12">
-            <nz-statistic
-              [nzValue]="(2019.111 | number: '1.0-2')!"
-              [nzTitle]="'Account Balance (CNY)'"
+              [nzValue]="(balance) + ' CATE'"
+              [nzTitle]="'Account Balance'"
             ></nz-statistic>
           </nz-col>
         </nz-row>

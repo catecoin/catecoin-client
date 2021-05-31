@@ -6,6 +6,14 @@ import {
   HomeOutline,
   ApartmentOutline,
   LoadingOutline,
+  BugOutline,
+  ReloadOutline,
+  DeploymentUnitOutline,
+  SendOutline,
+  WalletOutline,
+  CopyOutline,
+  TwitterOutline,
+  GlobalOutline,
 } from "@ant-design/icons-angular/icons";
 
 export const ICONS_AUTO = [
@@ -16,4 +24,12 @@ export const ICONS_AUTO = [
   HomeOutline,
   ApartmentOutline,
   LoadingOutline,
+  BugOutline,
+  ReloadOutline,
+  DeploymentUnitOutline,
+  SendOutline,
+  WalletOutline,
+  CopyOutline,
+  TwitterOutline,
+  GlobalOutline,
 ];

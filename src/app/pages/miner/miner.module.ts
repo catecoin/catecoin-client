@@ -1,9 +1,9 @@
 import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
 
-import { HomeRoutingModule } from "./home-routing.module";
+import { MinerRoutingModule } from "./miner-routing.module";
 
-import { HomeComponent } from "./home.component";
+import { MinerComponent } from "./miner.component";
 import { SharedModule } from "../../shared/shared.module";
 
 import { NzGridModule } from "ng-zorro-antd/grid";
@@ -13,9 +13,11 @@ import { NzStatisticModule } from "ng-zorro-antd/statistic";
 import { NzSpinModule } from "ng-zorro-antd/spin";
 import { NzModalService } from "ng-zorro-antd/modal";
 import { NzButtonModule } from "ng-zorro-antd/button";
+import { NzSliderModule } from "ng-zorro-antd/slider";
+import { NzBadgeModule } from "ng-zorro-antd/badge";
 
 @NgModule({
-  declarations: [HomeComponent],
+  declarations: [MinerComponent],
   imports: [
     CommonModule,
     SharedModule,
@@ -24,9 +26,11 @@ import { NzButtonModule } from "ng-zorro-antd/button";
     NzCardModule,
     NzEmptyModule,
     NzSpinModule,
+    NzSliderModule,
+    NzBadgeModule,
     NzStatisticModule,
-    HomeRoutingModule,
+    MinerRoutingModule,
   ],
   providers: [NzModalService],
 })
-export class HomeModule {}
+export class MinerModule {}

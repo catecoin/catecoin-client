@@ -1,52 +1,45 @@
-<nz-spin nzTip="Closing..." [nzSpinning]="closing">
+<nz-spin
+  *ngIf="closing"
+  nzTip="Closing..."
+  [nzSpinning]="closing"
+  style="min-height: 100%"
+></nz-spin>
+<ng-container *ngIf="!closing">
   <nz-affix>
     <ul nz-menu nzMode="horizontal" nzTheme="dark" [nzSelectable]="false">
       <li nz-menu-item routerLink="/home">
         <i nz-icon nzType="home"></i>
         Meow
       </li>
+      <li nz-menu-item routerLink="/miner">
+        <i nz-icon nzType="deployment-unit"></i>
+        Miner
+      </li>
+      <li nz-menu-item routerLink="/tx">
+        <i nz-icon nzType="send"></i>
+        Send
+      </li>
       <li nz-submenu nzTitle="Node" nzIcon="apartment">
         <ul>
-          <li nz-menu-item (click)="this.getNodeInfo()" [nzSelected]="false">
-            Get NodeInfo
-          </li>
+          <li nz-menu-item (click)="this.getNodeInfo()">Get NodeInfo</li>
         </ul>
         <ul>
-          <li nz-menu-item (click)="this.getPeers()" [nzSelected]="false">
-            Get Peers
-          </li>
+          <li nz-menu-item (click)="this.getPeers()">Get Peers</li>
         </ul>
       </li>
       <li nz-submenu nzTitle="Settings" nzIcon="setting">
         <ul>
-          <li
-            nz-menu-item
-            (click)="this.rpc.openDevTools()"
-            [nzSelected]="false"
-          >
-            Open DevTools
-          </li>
-          <li nz-menu-group nzTitle="Item 1">
+          <li nz-submenu nzTitle="Debug" nzIcon="bug">
             <ul>
-              <li nz-menu-item routerLink="/detail">Option 1</li>
-              <li nz-menu-item>Option 2</li>
-            </ul>
-          </li>
-          <li nz-menu-group nzTitle="Item 2">
-            <ul>
-              <li nz-menu-item>Option 3</li>
-              <li nz-menu-item>Option 4</li>
-              <li nz-submenu nzTitle="Sub Menu">
-                <ul>
-                  <li nz-menu-item nzDisabled>Option 5</li>
-                  <li nz-menu-item>Option 6</li>
-                </ul>
+              <li nz-menu-item (click)="this.rpc.openDevTools()">
+                Open DevTools
               </li>
-              <li nz-submenu nzDisabled nzTitle="Disabled Sub Menu">
-                <ul>
-                  <li nz-menu-item>Option 5</li>
-                  <li nz-menu-item>Option 6</li>
-                </ul>
+              <li
+                *ngIf="!AppConfig.production"
+                nz-menu-item
+                (click)="this.reload()"
+              >
+                Reload
               </li>
             </ul>
           </li>
@@ -55,6 +48,39 @@
     </ul>
   </nz-affix>
   <router-outlet></router-outlet>
+  <div class="bottom-bar" style="margin: 0">
+    <div>
+      <nz-badge
+        [(nzStatus)]="globalStatusType"
+        [(nzText)]="globalStatus"
+      ></nz-badge>
+    </div>
+    <div *ngIf="Utils.Status === 'Syncing'">
+      <nz-progress
+        [nzPercent]="(_blockNumber / _highestBlock).toFixed(2)"
+        [nzStrokeColor]="{ '0%': '#108ee9', '100%': '#87d068' }"
+        nzSize="small"
+        style="min-width: 300px; display: inline-block"
+      ></nz-progress>
+    </div>
+    <div class="icons">
+      <a
+        (click)="this.rpc.openUrlBySystemBrowser('https://catecoin.com')"
+        target="_blank"
+      >
+        <i nz-icon nzType="global" nzTheme="outline"></i
+        >&nbsp;https://catecoin.com
+      </a>
+      <a
+        (click)="
+          this.rpc.openUrlBySystemBrowser('https://twitter.com/cate_coin')
+        "
+        target="_blank"
+      >
+        <i nz-icon nzType="twitter" nzTheme="outline"></i>&nbsp;@cate_coin
+      </a>
+    </div>
+  </div>
   <nz-modal
     [(nzVisible)]="showCloseConfirm"
     nzTitle="Message"
@@ -65,4 +91,4 @@
       <p>{{ "APP.CLOSE_TIP" | translate }}</p>
     </ng-container>
   </nz-modal>
-</nz-spin>
+</ng-container>

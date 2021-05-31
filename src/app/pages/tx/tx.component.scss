@@ -1,0 +1,30 @@
+:host ::ng-deep {
+  .thread-bar nz-statistic-number {
+    width: 80%;
+    min-width: 200px;
+  }
+  .thread-bar nz-statistic-number .ant-statistic-content-value {
+    display: block;
+  }
+}
+.button-group {
+  margin-top: 10px;
+  button {
+    margin-right: 5px;
+  }
+}
+.container nz-card {
+  margin-bottom: 20px;
+}
+
+.option_balance {
+  display: #333;
+}
+
+.copy_btn {
+  cursor: pointer;
+  user-select: none;
+  i {
+    padding-right: 5px;
+  }
+}

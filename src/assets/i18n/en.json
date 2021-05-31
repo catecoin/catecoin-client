@@ -11,5 +11,7 @@
   },
   "APP": {
     "CLOSE_TIP": "Do you want shutdown the catecoin client?"
-  }
+  },
+  "PASSWORD": "Password",
+  "PASSPHRASE": "Passphrase"
 }

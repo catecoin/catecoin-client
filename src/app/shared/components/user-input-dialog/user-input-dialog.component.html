@@ -1,0 +1,23 @@
+<form nz-form [formGroup]="validateForm">
+  <nz-alert
+    *ngIf="content"
+    style="margin-top: -20px"
+    nzType="warning"
+    [nzMessage]="content"
+    nzShowIcon
+  ></nz-alert>
+  <nz-form-item style="margin-top: 20px">
+    <nz-form-label [nzSpan]="6" nzFor="content">{{
+      inputName | translate
+    }}</nz-form-label>
+    <nz-form-control [nzSpan]="14">
+      <input
+        nz-input
+        name="content"
+        formControlName="content"
+        [type]="inputType"
+        id="content"
+      />
+    </nz-form-control>
+  </nz-form-item>
+</form>

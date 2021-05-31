@@ -9,19 +9,8 @@ import * as fs from "fs";
 import { Subject } from "rxjs";
 import { CloseEvent } from "./closeevent";
 import { HttpClient } from "@angular/common/http";
+import { Utils } from "../../../app.utils";
 import { AppConfig } from "../../../../environments/environment";
-
-const pathPrefix = AppConfig.production ? "./resources/app/" : "./";
-const NodeConf = {
-  NetworkId: "115599335577",
-  RpcPort: (Math.floor(Math.random() * 100) + 8545).toString(),
-  NodePort: (Math.floor(Math.random() * 100) + 30303).toString(),
-  CatecoinCorePath: pathPrefix + "bin/geth.exe",
-  GenesisConfPath: pathPrefix + "catecoin_data/genesis.json",
-  DataPath: pathPrefix + "catecoin_data/chain/",
-  NodeKeyPath: pathPrefix + "catecoin_data/chain/geth/nodekey",
-  StaticNodeConfPath: pathPrefix + "catecoin_data/chain/static-nodes.json",
-};
 
 @Injectable({
   providedIn: "root",
@@ -32,13 +21,10 @@ export class RPCService {
   remote: typeof remote;
   childProcess: typeof childProcess;
   fs: typeof fs;
-  mainProcess: childProcess.ChildProcess;
   onclose: Subject<CloseEvent> = new Subject<CloseEvent>();
   onstarted: Subject<null> = new Subject<null>();
   _started = false;
-  corsConfig = AppConfig.production
-    ? []
-    : ["--http.corsdomain", "http://localhost:4200"];
+  nodeConf: any = {};
 
   get isStarted(): boolean {
     return this._started;
@@ -54,89 +40,107 @@ export class RPCService {
       this.ipcRenderer.send("open-devtools");
     }
   }
-  get isInitialized(): boolean {
-    if (this.fs) {
-      return this.fs.existsSync(NodeConf.NodeKeyPath);
-    } else {
-      return false;
+  async initNodeConf() {
+    return new Promise((resolve, reject) => {
+      if (this.ipcRenderer) {
+        this.ipcRenderer.on("NodeConf", (event, args) => {
+          this.nodeConf = args[0];
+          resolve(null);
+        });
+        this.ipcRenderer.send("getNodeConf");
+      } else {
+        reject(null);
+      }
+    });
+  }
+  getCpuCount() {
+    if (this.ipcRenderer) {
+      return this.ipcRenderer.sendSync("getCpuCount");
     }
   }
-  initNode() {
-    if (this.childProcess) {
-      var process = this.childProcess.execFile(NodeConf.CatecoinCorePath, [
-        "--datadir",
-        NodeConf.DataPath,
-        "--networkid",
-        NodeConf.NetworkId,
-        "init",
-        NodeConf.GenesisConfPath,
-      ]);
-      process.on("close", (code) => {
-        if (code === 0) {
-          this.fs.writeFileSync(
-            NodeConf.StaticNodeConfPath,
-            JSON.stringify([
-              "enode://3086e076518603c96f0a3cd08a2a80396c53e79ab1a3cf832dc2f8762495a8a6a6c258835dd8f168cc6f3c271c531b84eead86aa0fbdf6dd9472678f27cc6fbf@138.197.75.67:30303",
-            ])
-          );
-        }
-      });
-    }
+  //#region Catecoin RPC
+  async GetAccounts() {
+    var resp = await this.rpcCall("eth_accounts");
+    return resp as string[];
   }
-
-  startMainProcess() {
-    if (this.childProcess) {
-      let corsConfig = AppConfig.production
-        ? []
-        : ["--http.corsdomain", "http://localhost:4200"];
-
-      this.mainProcess = this.childProcess.execFile(NodeConf.CatecoinCorePath, [
-        "--datadir",
-        NodeConf.DataPath,
-        "--networkid",
-        NodeConf.NetworkId,
-        "--port",
-        NodeConf.NodePort,
-        "--http",
-        "--http.port",
-        NodeConf.RpcPort,
-        "--http.api",
-        "admin,personal,eth",
-        ...corsConfig,
-        "console",
-      ]);
-      this.mainProcess.stdout.on("data", (data: string) => {
-        if (data.endsWith(">")) {
-          this._started = true;
-          this.onstarted.next();
-        }
-      });
-    }
+  async CreateAccount(passphrase) {
+    var resp = await this.rpcCall("personal_newAccount", [passphrase]);
+    return resp as string;
   }
+  async StartMining(thread = 1) {
+    var resp = await this.rpcCall("miner_start", [thread]);
+    return true;
+  }
+  async StopMining() {
+    var resp = await this.rpcCall("miner_stop");
+    return true;
+  }
+  async SetMinerEtherbase(account) {
+    var resp = await this.rpcCall("miner_setEtherbase", [account]);
+    return resp as boolean;
+  }
+  async GetBalance(account, tag = "latest") {
+    var resp = await this.rpcCall("eth_getBalance", [account, tag]);
+    return resp as string;
+  }
+  async GetHashrate() {
+    var resp = await this.rpcCall("ethash_getHashrate");
+    return resp as number;
+  }
+  async GetIsMining() {
+    var resp = await this.rpcCall("eth_mining");
+    return resp as boolean;
+  }
+  async GetIsSyncing() {
+    var resp = await this.rpcCall("eth_syncing");
+    return resp;
+  }
+  async GetBlockNumber() {
+    var resp = await this.rpcCall("eth_blockNumber");
+    return resp;
+  }
+  async GetGasPrice() {
+    var resp = await this.rpcCall("eth_gasPrice");
+    return resp;
+  }
+  async EstimateGas(txInfo) {
+    var resp = await this.rpcCall("eth_estimateGas", [txInfo]);
+    return resp;
+  }
+  async UnlockAccount(address, passphrase) {
+    var resp = await this.rpcCall("personal_unlockAccount", [
+      address,
+      passphrase,
+    ]);
+    return resp;
+  }
+  async SendTransaction(txInfo) {
+    var resp = await this.rpcCall("eth_sendTransaction", [txInfo]);
+    return resp;
+  }
+  //#endregion
   close() {
-    if (this.mainProcess && this.mainProcess.exitCode === null) {
-      this.mainProcess?.stdin.write("exit\n");
-      this.mainProcess?.on("close", (code, signal) => {
-        if (code === 0) {
-          this.ipcRenderer.send("close");
-        }
-      });
-    } else {
+    if (this.ipcRenderer) {
       this.ipcRenderer.send("close");
+    }
+  }
+  openUrlBySystemBrowser(url) {
+    if (this.ipcRenderer) {
+      this.ipcRenderer.send("sys-open", url);
     }
   }
   async TxtDNSLookup(domain: string) {
     return new Promise<string>((resolve, reject) => {
-      let reqId = this.randomString(10);
+      let reqId = Utils.randomString(10);
       this.ipcRenderer.once("dnslookup-feedback-" + reqId, (event, args) => {
         resolve(args);
       });
       this.ipcRenderer.send("dnslookup", [domain, reqId]);
     });
   }
-  async rpcCall(method: string, params: string[] = []) {
+  async rpcCall(method: string, params: any[] = []) {
     var resp: any = await this.http
-      .post("http://127.0.0.1:" + NodeConf.RpcPort, {
+      .post("http://127.0.0.1:" + this.nodeConf.RpcPort, {
         jsonrpc: "2.0",
         method,
         params,
@@ -146,16 +150,6 @@ export class RPCService {
     if (resp.result) {
       return resp.result;
     }
-  }
-  private randomString(len) {
-    len = len || 32;
-    const $chars = "ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz2345678";
-    const maxPos = $chars.length;
-    let pwd = "";
-    for (let i = 0; i < len; i++) {
-      pwd += $chars.charAt(Math.floor(Math.random() * maxPos));
-    }
-    return pwd;
   }
   constructor(private http: HttpClient) {
     if (this.isElectron) {

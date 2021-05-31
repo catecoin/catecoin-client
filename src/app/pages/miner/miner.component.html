@@ -1,0 +1,56 @@
+<div class="container" style="padding: 10px">
+  <nz-card nzTitle="Miner Setting">
+    <nz-row>
+      <nz-col [nzSpan]="24">
+        <nz-statistic
+          [nzValueTemplate]="miningThread"
+          [nzTitle]="
+            'Mining Thread (More threads, more CPU usage, and higher speed.)'
+          "
+          class="thread-bar"
+        ></nz-statistic>
+      </nz-col>
+      <ng-template #miningThread>
+        <nz-slider
+          [nzMin]="1"
+          [nzMax]="maxThread"
+          [(ngModel)]="useThread"
+        ></nz-slider>
+      </ng-template>
+    </nz-row>
+  </nz-card>
+
+  <nz-card nzTitle="Miner Status">
+    <div nz-row [nzGutter]="32">
+      <div nz-col>
+        <nz-statistic
+          [nzValueTemplate]="miningStatus"
+          [nzTitle]="'Staus'"
+        ></nz-statistic>
+        <ng-template #miningStatus>
+          <nz-badge
+            [nzStatus]="IsMining ? 'processing' : 'default'"
+            [nzText]="IsMining ? 'Mining' : 'Not Mining'"
+          ></nz-badge>
+        </ng-template>
+      </div>
+      <div nz-col>
+        <nz-statistic
+          [nzValueTemplate]="miningSpeed"
+          [nzTitle]="'Speed'"
+        ></nz-statistic>
+        <ng-template #miningSpeed>
+          {{ Hashrate }}
+        </ng-template>
+      </div>
+    </div>
+    <div class="button-group">
+      <button nz-button [disabled]="!canMining" (click)="startMiner()">
+        Start Mining
+      </button>
+      <button nz-button [disabled]="!IsMining" (click)="stopMiner()">
+        Stop Mining
+      </button>
+    </div>
+  </nz-card>
+</div>

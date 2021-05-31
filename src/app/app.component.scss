@@ -1,3 +1,36 @@
 :host {
-  
+}
+.header-menu {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  z-index: 999;
+  overflow: hidden;
+  user-select: none;
+}
+.bottom-bar {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  max-height: 28px;
+  height: 28px;
+  z-index: 999;
+  overflow: hidden;
+  background: #eee;
+  padding: 2px 10px;
+  user-select: none;
+  div {
+    margin-right: 2px;
+  }
+  .icons {
+    position: absolute;
+    top: 3px;
+    right: 5px;
+    a {
+      margin: 0 5px;
+      i {
+        font-size: 13px;
+      }
+    }
+  }
 }

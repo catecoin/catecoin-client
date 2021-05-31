@@ -1,0 +1,117 @@
+<div class="container" style="padding: 10px">
+  <nz-card nzTitle="Send">
+    <form nz-form [formGroup]="sendForm">
+      <nz-form-item>
+        <nz-form-label [nzSpan]="4" nzFor="account">Account</nz-form-label>
+        <nz-form-control [nzSpan]="20">
+          <nz-select
+            #account
+            name="account"
+            formControlName="account"
+            [nzCustomTemplate]="option_label"
+          >
+            <nz-option
+              *ngFor="let item of accountInfo"
+              [nzValue]="item"
+              nzCustomContent
+            >
+              <i nz-icon nzType="wallet"></i>
+              {{ item.address }}
+              <nz-tag style="font-size: 14px" [nzColor]="'#108ee9'">
+                {{ Utils.GetReadableBalance(item.balance) }}
+                CATE
+              </nz-tag>
+            </nz-option>
+          </nz-select>
+          <ng-template #option_label let-selected>
+            <span nz-tooltip [nzTooltipTitle]="copyAddress">
+              <i nz-icon nzType="wallet"></i>
+              {{ selected.nzValue.address }}
+            </span>
+
+            <nz-tag style="font-size: 14px" [nzColor]="'#108ee9'">
+              {{ Utils.GetReadableBalance(selected.nzValue.balance) }} CATE
+            </nz-tag>
+            <ng-template #copyAddress>
+              <span
+                class="copy_btn"
+                ngxClipboard
+                [cbContent]="selected.nzValue.address"
+                (cbOnSuccess)="copied($event)"
+              >
+                <i nz-icon nzType="copy"></i>
+                Copy
+              </span>
+            </ng-template>
+          </ng-template>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSpan]="4" nzFor="to_address"
+          >To Address</nz-form-label
+        >
+        <nz-form-control [nzSpan]="20">
+          <input
+            nz-input
+            placeholder="Please input CATE wallet address."
+            formControlName="to_address"
+            nzSize="large"
+            name="to_address"
+            type="text"
+            id="to_address"
+          />
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSpan]="4" nzFor="amount">Amount</nz-form-label>
+        <nz-form-control [nzSpan]="20">
+          <nz-input-number
+            [nzMin]="0"
+            [nzStep]="0.000001"
+            formControlName="amount"
+            style="width: 100%"
+            nzSize="middle"
+            name="amount"
+            id="amount"
+            [nzFormatter]="formatterCate"
+            [nzParser]="parserCate"
+          ></nz-input-number>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSpan]="4" nzFor="transaction_fee"
+          >Transaction Fee</nz-form-label
+        >
+        <nz-form-control [nzSpan]="20">
+          <nz-input-number
+            [nzMin]="0"
+            [nzStep]="0.0000000001"
+            formControlName="transaction_fee"
+            style="width: 100%"
+            nzSize="middle"
+            name="transaction_fee"
+            id="transaction_fee"
+            [nzFormatter]="formatterCate"
+            [nzParser]="parserCate"
+          ></nz-input-number>
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-col [nzSpan]="4"></nz-col>
+        <nz-form-control [nzSpan]="20">
+          <button
+            nz-button
+            nzType="primary"
+            nzSize="large"
+            [disabled]="!sendForm.valid"
+            (click)="send()"
+            [nzLoading]="submitting"
+          >
+            <i nz-icon nzType="send" nzTheme="outline"></i>Send
+          </button>
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+  </nz-card>
+</div>
